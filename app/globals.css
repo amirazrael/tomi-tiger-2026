@@ -1,26 +1,405 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* Palette drawn from Moonrags Studio's illustrations: Tomi's fur, jungle greens, cream sky */
+  --color-cream: #fdf6ea;
+  --color-cream-deep: #f7ecd8;
+  --color-paper: #fffdf8;
+  --color-tiger: #e68a3c;
+  --color-tiger-deep: #c1601a;
+  --color-sunshine: #f3b94d;
+  --color-jungle: #4d8157;
+  --color-jungle-deep: #2f5c3b;
+  --color-jungle-mist: #dbe8d4;
+  --color-sky: #ddedf2;
+  --color-berry: #c95e7e;
+  --color-ink: #45311f;
+  --color-ink-soft: #6f5a44;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-display: var(--font-baloo), "Comic Sans MS", cursive;
+  --font-body: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --shadow-storybook: 0 10px 30px -10px rgb(69 49 31 / 0.25),
+    0 4px 10px -6px rgb(69 49 31 / 0.15);
+  --shadow-lifted: 0 24px 45px -18px rgb(69 49 31 / 0.35),
+    0 8px 16px -8px rgb(69 49 31 / 0.2);
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-slow: float 9s ease-in-out infinite;
+  --animate-flutter: flutter 7s ease-in-out infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-14px);
+    }
+  }
+  @keyframes flutter {
+    0%,
+    100% {
+      transform: translate(0, 0) rotate(-4deg);
+    }
+    25% {
+      transform: translate(10px, -16px) rotate(5deg);
+    }
+    50% {
+      transform: translate(-6px, -26px) rotate(-6deg);
+    }
+    75% {
+      transform: translate(-14px, -10px) rotate(4deg);
+    }
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+/* Subtle paper grain over everything — keeps the hand-made feel */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: var(--font-display);
+}
+
+::selection {
+  background: var(--color-sunshine);
+  color: var(--color-ink);
+}
+
+/* Scroll-reveal (used by <Reveal>) */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Storybook FAQ accordion */
+details.faq summary {
+  cursor: pointer;
+  list-style: none;
+}
+details.faq summary::-webkit-details-marker {
+  display: none;
+}
+details.faq summary::after {
+  content: "+";
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--color-tiger);
+  float: right;
+  transition: transform 0.25s ease;
+}
+details.faq[open] summary::after {
+  transform: rotate(45deg);
+}
+
+/* ---------- Magic layer ---------- */
+
+/* Paw-print cursor on interactive elements (desktop) */
+@media (hover: hover) and (pointer: fine) {
+  a,
+  button,
+  [role="button"],
+  summary {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 64 64"><g fill="%23c1601a"><ellipse cx="32" cy="44" rx="13" ry="10"/><ellipse cx="15" cy="28" rx="5.5" ry="7.5" transform="rotate(-20 15 28)"/><ellipse cx="26" cy="20" rx="5.5" ry="7.5" transform="rotate(-6 26 20)"/><ellipse cx="38" cy="20" rx="5.5" ry="7.5" transform="rotate(6 38 20)"/><ellipse cx="49" cy="28" rx="5.5" ry="7.5" transform="rotate(20 49 28)"/></g></svg>')
+        13 6,
+      pointer;
+  }
+}
+
+/* Storybook word entrances */
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: translateY(26px) scale(0.9);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.word-in {
+  display: inline-block;
+  opacity: 0;
+  animation: bounce-in 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Words that pop when their parent .reveal enters the viewport */
+.pop-word {
+  display: inline-block;
+  opacity: 0;
+}
+.reveal.revealed .pop-word {
+  animation: bounce-in 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Brush underline that draws itself */
+.underline-draw {
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: draw-under 0.7s 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+@keyframes draw-under {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Slowly breathing organic blob (hero portrait) */
+@keyframes blob-morph {
+  0%,
+  100% {
+    border-radius: 38% 62% 57% 43% / 45% 38% 62% 55%;
+  }
+  33% {
+    border-radius: 55% 45% 42% 58% / 48% 55% 45% 52%;
+  }
+  66% {
+    border-radius: 44% 56% 60% 40% / 58% 42% 55% 45%;
+  }
+}
+.blob-morph {
+  animation: blob-morph 14s ease-in-out infinite;
+}
+
+/* Butterfly that flies across the section on a winding path */
+.butterfly-flight {
+  offset-path: path(
+    "M-40,90 C120,10 260,150 420,60 C560,-15 700,110 840,40 C960,-10 1080,80 1240,30"
+  );
+  offset-rotate: 0deg;
+  animation: flight 32s ease-in-out infinite alternate;
+}
+@keyframes flight {
+  to {
+    offset-distance: 100%;
+  }
+}
+
+/* Twinkling sparkles */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.6) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1) rotate(25deg);
+  }
+}
+.twinkle {
+  animation: twinkle 3.4s ease-in-out infinite;
+}
+
+/* Fireflies in the jungle */
+@keyframes firefly-drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(18px, -22px);
+  }
+  50% {
+    transform: translate(-12px, -38px);
+  }
+  75% {
+    transform: translate(-24px, -10px);
+  }
+}
+.firefly {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: #ffe9a8;
+  box-shadow: 0 0 12px 4px rgb(243 185 77 / 0.6);
+  animation: firefly-drift 11s ease-in-out infinite, twinkle 2.8s ease-in-out infinite;
+}
+
+/* Shine sweep across book covers on hover */
+.shine-sweep {
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: 0;
+  width: 45%;
+  background: linear-gradient(
+    105deg,
+    transparent,
+    rgb(255 255 255 / 0.35),
+    transparent
+  );
+  transform: translateX(-160%) rotate(8deg);
+  pointer-events: none;
+}
+.group:hover .shine-sweep {
+  animation: shine 0.9s ease;
+}
+@keyframes shine {
+  to {
+    transform: translateX(320%) rotate(8deg);
+  }
+}
+
+/* Tomi's tail-o-meter */
+.tail-svg {
+  transform-origin: 24px 124px;
+  transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.tail-happy {
+  animation: tail-wag 0.55s ease-in-out infinite;
+}
+@keyframes tail-wag {
+  0%,
+  100% {
+    transform: rotate(-12deg);
+  }
+  50% {
+    transform: rotate(16deg);
+  }
+}
+.tail-sad {
+  transform: rotate(42deg) scaleY(0.96);
+}
+.tail-nervous {
+  animation: tail-twitch 0.9s ease-in-out infinite;
+}
+@keyframes tail-twitch {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  18% {
+    transform: rotate(7deg);
+  }
+  38% {
+    transform: rotate(-5deg);
+  }
+  58% {
+    transform: rotate(5deg);
+  }
+  78% {
+    transform: rotate(-3deg);
+  }
+}
+.tail-uncertain {
+  animation: tail-swish 2.6s ease-in-out infinite;
+}
+@keyframes tail-swish {
+  0%,
+  100% {
+    transform: rotate(-16deg);
+  }
+  50% {
+    transform: rotate(12deg);
+  }
+}
+
+/* Gentle scroll parallax — only in browsers with scroll-driven animations */
+@supports (animation-timeline: view()) {
+  .parallax-drift {
+    animation: parallax-drift linear both;
+    animation-timeline: view();
+  }
+  @keyframes parallax-drift {
+    from {
+      transform: translateY(55px);
+    }
+    to {
+      transform: translateY(-55px);
+    }
+  }
+}
+
+/* Musical notes floating up from the theme-song player */
+@keyframes note-float {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.7) rotate(-8deg);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-52px) scale(1.15) rotate(10deg);
+  }
+}
+.note-float {
+  animation: note-float 2.6s ease-out infinite;
+}
+
+/* Clouds: gentle local drift (behind the portrait)… */
+@keyframes cloud-drift {
+  from {
+    transform: translateX(-26px);
+  }
+  to {
+    transform: translateX(26px);
+  }
+}
+.cloud-drift {
+  animation: cloud-drift 16s ease-in-out infinite alternate;
+  animation-delay: var(--cloud-delay, 0s);
+}
+
+/* …and slow full crossings of the sky (hero background) */
+@keyframes cloud-across {
+  from {
+    transform: translateX(-30vw);
+  }
+  to {
+    transform: translateX(115vw);
+  }
+}
+.cloud-across {
+  animation: cloud-across var(--cloud-dur, 90s) linear infinite;
+  animation-delay: var(--cloud-delay, 0s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
