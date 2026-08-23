@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Baloo_2, Nunito } from "next/font/google";
 import Script from "next/script";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const baloo = Baloo_2({
@@ -15,18 +16,28 @@ const nunito = Nunito({
   display: "swap",
 });
 
+const siteDescription =
+  "Join Tomi on seven heart-warming jungle adventures about friendship, bravery and trying again — picture books for ages 3–6. - by April Summers";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://tomithetiger.com"),
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: "Tomi the Tiger — Picture Books for Ages 3–6 by April Summers",
     template: "%s | Tomi the Tiger",
   },
-  description:
-    "Join Tomi, a warm-hearted little tiger, on seven adventures about friendship, bravery and big feelings. A picture book series for ages 3–6 by April Summers.",
+  description: siteDescription,
   openGraph: {
+    title: "Tomi the Tiger — Picture Books for Ages 3–6 by April Summers",
+    description: siteDescription,
+    url: getSiteUrl(),
     siteName: "Tomi the Tiger",
     type: "website",
     locale: "en_SG",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tomi the Tiger — Picture Books for Ages 3–6 by April Summers",
+    description: siteDescription,
   },
 };
 

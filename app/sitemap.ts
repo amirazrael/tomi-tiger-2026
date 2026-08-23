@@ -1,10 +1,10 @@
 import type { MetadataRoute } from "next";
 import { getBooks } from "@/lib/data";
-
-const BASE = "https://tomithetiger.com";
+import { getSiteUrl } from "@/lib/site-url";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const books = await getBooks();
+  const base = getSiteUrl();
 
   const staticPages = [
     "",
@@ -18,13 +18,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/privacy",
     "/terms",
   ].map((path) => ({
-    url: `${BASE}${path}`,
+    url: `${base}${path}`,
     changeFrequency: "weekly" as const,
     priority: path === "" ? 1 : 0.7,
   }));
 
   const bookPages = books.map((book) => ({
-    url: `${BASE}/books/${book.slug}`,
+    url: `${base}/books/${book.slug}`,
     changeFrequency: "weekly" as const,
     priority: 0.9,
   }));
