@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import BuyButtons from "@/components/BuyButtons";
-import { Cover } from "@/components/BookCard";
+import { Cover, CoverFrame } from "@/components/BookCard";
 import { PawTrail, SectionTitle } from "@/components/decor";
 import Reveal from "@/components/Reveal";
 import ReviewCard from "@/components/ReviewCard";
@@ -68,9 +68,9 @@ export default async function BookPage({ params }: Props) {
 
           <div className="grid gap-10 lg:grid-cols-5 lg:gap-16">
             <div className="lg:col-span-2">
-              <div className="relative mx-auto max-w-sm aspect-3/4 overflow-hidden rounded-3xl shadow-lifted rotate-1">
+              <CoverFrame className="mx-auto max-w-sm">
                 <Cover book={book} priority />
-              </div>
+              </CoverFrame>
             </div>
 
             <div className="lg:col-span-3">
@@ -101,7 +101,16 @@ export default async function BookPage({ params }: Props) {
 
               <div className="mt-6 space-y-4 text-lg text-ink-soft leading-relaxed">
                 {paragraphs(book.blurb).map((p) => (
-                  <p key={p.slice(0, 24)}>{p}</p>
+                  <p
+                    key={p.slice(0, 24)}
+                    className={
+                      p.startsWith('"') || p.startsWith("\u201c")
+                        ? "font-display text-xl italic text-tiger-deep"
+                        : undefined
+                    }
+                  >
+                    {p}
+                  </p>
                 ))}
               </div>
 
@@ -112,9 +121,11 @@ export default async function BookPage({ params }: Props) {
               {book.readingLevelNotes && (
                 <div className="mt-8 rounded-2xl bg-cream-deep p-5">
                   <p className="font-display text-ink mb-1">For grown-ups</p>
-                  <p className="text-sm text-ink-soft leading-relaxed">
-                    {book.readingLevelNotes}
-                  </p>
+                  <div className="space-y-3 text-sm text-ink-soft leading-relaxed">
+                    {paragraphs(book.readingLevelNotes).map((p) => (
+                      <p key={p.slice(0, 24)}>{p}</p>
+                    ))}
+                  </div>
                 </div>
               )}
 

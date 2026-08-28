@@ -15,26 +15,23 @@ const COVER_TINTS = [
   ["#d9b8e0", "#9a6daa"],
 ];
 
-export function Cover({ book, priority = false }: { book: Book; priority?: boolean }) {
-  if (book.coverImage) {
-    return (
-      <Image
-        src={book.coverImage}
-        alt={`${book.title} — book cover`}
-        fill
-        priority={priority}
-        sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 260px"
-        className="object-cover"
-      />
-    );
-  }
-  const [from, to] = COVER_TINTS[(book.bookNumber - 1) % COVER_TINTS.length];
+function CoverBackdrop({
+  book,
+  from,
+  to,
+}: {
+  book: Book;
+  from: string;
+  to: string;
+}) {
   return (
-    <div
-      className="absolute inset-0"
-      style={{ background: `radial-gradient(circle at 30% 20%, ${from}, ${to})` }}
-    >
-      {/* watercolour blotches + jungle silhouettes */}
+    <>
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `radial-gradient(circle at 30% 20%, ${from}, ${to})`,
+        }}
+      />
       <svg
         className="absolute inset-0 h-full w-full"
         viewBox="0 0 300 400"
@@ -57,6 +54,52 @@ export function Cover({ book, priority = false }: { book: Book; priority?: boole
           <path d="M300,-10 C240,15 225,60 250,100 C272,62 290,30 305,10 Z" />
         </g>
       </svg>
+    </>
+  );
+}
+
+/** Shared card shell — same on grids and the book detail page. */
+export function CoverFrame({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`relative aspect-3/4 overflow-hidden rounded-2xl shadow-storybook ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+export function Cover({ book, priority = false }: { book: Book; priority?: boolean }) {
+  const [from, to] = COVER_TINTS[(book.bookNumber - 1) % COVER_TINTS.length];
+
+  if (book.coverImage) {
+    return (
+      <div className="absolute inset-0">
+        <CoverBackdrop book={book} from={from} to={to} />
+        <div className="absolute inset-0 flex items-center justify-center p-2">
+          <Image
+            src={book.coverImage}
+            alt={`${book.title} — book cover`}
+            width={800}
+            height={800}
+            priority={priority}
+            sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 260px"
+            className="max-h-full max-w-full rounded-lg object-contain object-center shadow-storybook"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="absolute inset-0">
+      <CoverBackdrop book={book} from={from} to={to} />
       <div className="absolute inset-0 flex flex-col items-center justify-between p-5 text-center">
         <span className="font-display text-cream/90 text-[0.65rem] tracking-[0.3em] uppercase">
           Tomi the Tiger
@@ -96,15 +139,15 @@ export default function BookCard({
       className={`group block ${tilt} transition-transform duration-300 hover:rotate-0 hover:-translate-y-2`}
     >
       <TiltCard>
-        <div className="relative aspect-3/4 overflow-hidden rounded-2xl shadow-storybook transition-shadow duration-300 group-hover:shadow-lifted">
+        <CoverFrame className="transition-shadow duration-300 group-hover:shadow-lifted">
           <Cover book={book} />
           <span className="shine-sweep" />
-          {book.comingSoon && (
+          {book.comingSoon && !book.coverImage && (
             <span className="absolute top-3 -right-9 rotate-45 bg-berry px-10 py-1 font-display text-xs text-cream shadow-storybook">
               Coming soon
             </span>
           )}
-        </div>
+        </CoverFrame>
       </TiltCard>
       <div className="mt-4 text-center">
         <p className="font-display text-tiger text-sm">Book {book.bookNumber}</p>

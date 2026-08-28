@@ -20,14 +20,16 @@ export const seedBooks: Book[] = [
   {
     slug: "tomi-finds-a-friend",
     title: "Tomi Finds a Friend",
+    subtitle: "Not everyone says yes.",
     bookNumber: 1,
+    coverImage: "/images/books/tomi-finds-a-friend-cover-v2.png",
     blurb:
-      "Tomi is a little tiger with soft orange fur, bright eyes and a bouncy tail — and today, he doesn't want to play alone.\n\nSo he sets off through the jungle to find a friend. Snake says no. The crocodiles say no. But Tomi keeps looking, because that's what Tomi does — until he meets someone who changes everything.\n\nA warm story about courage, kindness and the very first friend.",
+      "Tomi is a little tiger who loves to run, jump, and play.\n\nBut today, he doesn't want to play alone.\n\nSo off he goes to find a friend — past the tall grass, past the quiet lake, further from home than he's ever been. Each time someone says no, Tomi takes a breath.\n\n\"That's okay. I'll keep looking.\"",
     ageRange: "3–6",
     comingSoon: true,
     themes: ["Friendship", "Perseverance", "Kindness"],
     readingLevelNotes:
-      "Gentle, repetitive text perfect for reading aloud. Ideal first read for ages 3+.",
+      "A gentle story about handling rejection, staying hopeful, and finding a friend who wants to play too.\n\nIncludes a Note to Grown-Ups with conversation starters, plus three activity pages to explore feelings together.",
   },
   {
     slug: "tomi-learns-to-be-brave",
@@ -107,28 +109,26 @@ export const seedBooks: Book[] = [
 export const seedReviews: Review[] = [
   {
     quote:
-      "My daughter asks for ‘the bouncy tail tiger’ every single night. We know every word by heart now.",
-    reviewerName: "Sample review",
-    source: "Replace in Sanity",
+      "Tomi the Tiger was a very impressionable book as it helped my son navigate the realms of making friends. It also became an opener for me to ask him if he had ever encountered such situations before. Overall a great insightful read for parents and kids.",
+    reviewerName: "Ashley (30, Mother)",
     starRating: 5,
     bookSlug: "tomi-finds-a-friend",
     featured: true,
   },
   {
     quote:
-      "Our family motto for everything scary is now ‘one splash at a time’. A genuinely useful book.",
-    reviewerName: "Sample review",
-    source: "Replace in Sanity",
+      "Tomi the Tiger really resonated with me as a parent. It gave my son a relatable way to understand friendship, social situations, and the challenges that can come with making new friends. More importantly, it opened up some meaningful conversations between us about whether he had ever experienced similar situations himself. A thoughtful and insightful book that I'd recommend to both parents and children.",
+    reviewerName: "Amir (43, Father)",
     starRating: 5,
-    bookSlug: "tomi-faces-the-water",
+    bookSlug: "tomi-finds-a-friend",
     featured: true,
   },
   {
     quote:
-      "Beautiful watercolour illustrations and exactly the right length for a preschool story time.",
-    reviewerName: "Sample review",
-    source: "Replace in Sanity",
+      "I really liked Tomi the Tiger because it showed me how to make friends and what to do when things are not easy with friends. It made me think about things that have happened to me too. I also liked talking to my dad about the story and telling him about my own experiences. It was a fun book and I learned a lot from it!",
+    reviewerName: "Arez Tan (5, Child)",
     starRating: 5,
+    bookSlug: "tomi-finds-a-friend",
     featured: true,
   },
 ];
