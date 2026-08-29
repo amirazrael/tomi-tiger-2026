@@ -46,19 +46,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let content = children;
-  if (process.env.NODE_ENV === "development") {
-    const { default: DevicePreview } = await import("@/components/DevicePreview");
-    content = <DevicePreview>{children}</DevicePreview>;
-  }
-
   return (
     <html
       lang="en"
       className={`${baloo.variable} ${nunito.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {content}
+        {children}
         {process.env.NODE_ENV === "production" && (
           <Script
             defer
