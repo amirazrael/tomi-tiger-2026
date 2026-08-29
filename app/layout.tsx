@@ -41,18 +41,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let content = children;
+  if (process.env.NODE_ENV === "development") {
+    const { default: DevicePreview } = await import("@/components/DevicePreview");
+    content = <DevicePreview>{children}</DevicePreview>;
+  }
+
   return (
     <html
       lang="en"
       className={`${baloo.variable} ${nunito.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
+        {content}
         {process.env.NODE_ENV === "production" && (
           <Script
             defer
