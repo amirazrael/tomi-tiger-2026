@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import InstagramLink from "@/components/InstagramLink";
 import { SectionTitle } from "@/components/decor";
-import { getAbout, getPress } from "@/lib/data";
+import { getAbout, getPress, getSettings } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Press & Media Kit",
@@ -11,7 +12,11 @@ export const metadata: Metadata = {
 };
 
 export default async function PressPage() {
-  const [press, about] = await Promise.all([getPress(), getAbout()]);
+  const [press, about, settings] = await Promise.all([
+    getPress(),
+    getAbout(),
+    getSettings(),
+  ]);
 
   return (
     <section className="py-14 sm:py-20">
@@ -56,6 +61,16 @@ export default async function PressPage() {
             </Link>
             . A downloadable media kit is coming soon.
           </p>
+          {settings.instagramUrl && (
+            <p className="mt-4 text-sm text-ink-soft">
+              Follow the series on{" "}
+              <InstagramLink
+                url={settings.instagramUrl}
+                className="inline-flex min-h-0 min-w-0 align-middle text-sm"
+              />{" "}
+              for new art, events and announcements.
+            </p>
+          )}
         </div>
 
         <div className="mt-14">

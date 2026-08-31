@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { PawPrint } from "./decor";
+import InstagramLink from "./InstagramLink";
 
 const links = [
   { href: "/books", label: "The Books" },
@@ -14,7 +15,13 @@ const links = [
   { href: "/contact", label: "Contact" },
 ];
 
-export default function Header({ announcement }: { announcement?: string | null }) {
+export default function Header({
+  announcement,
+  instagramUrl,
+}: {
+  announcement?: string | null;
+  instagramUrl?: string | null;
+}) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -53,6 +60,13 @@ export default function Header({ announcement }: { announcement?: string | null 
                   {l.label}
                 </Link>
               ))}
+              {instagramUrl && (
+                <InstagramLink
+                  url={instagramUrl}
+                  showHandle={false}
+                  className="text-ink-soft hover:text-tiger-deep"
+                />
+              )}
               <Link
                 href="/free-colouring-page"
                 className="rounded-full bg-tiger px-5 py-2.5 font-display text-cream shadow-storybook transition hover:bg-tiger-deep hover:-translate-y-0.5"
@@ -91,6 +105,13 @@ export default function Header({ announcement }: { announcement?: string | null 
                 {l.label}
               </Link>
             ))}
+            {instagramUrl && (
+              <InstagramLink
+                url={instagramUrl}
+                showHandle={false}
+                className="rounded-xl px-3 py-3 text-ink hover:bg-cream-deep hover:text-tiger-deep"
+              />
+            )}
             <Link
               href="/free-colouring-page"
               onClick={() => setOpen(false)}

@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { SectionTitle } from "@/components/decor";
 import FaqList from "@/components/FaqList";
-import Reveal from "@/components/Reveal";
 import ThemeSongPlayer from "@/components/ThemeSongPlayer";
-import { getBooks, getDownloads, getFaqs } from "@/lib/data";
+import { getBooks, getFaqs } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "For Parents & Educators",
@@ -14,11 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ParentsEducatorsPage() {
-  const [downloads, books, faqs] = await Promise.all([
-    getDownloads(),
-    getBooks(),
-    getFaqs(),
-  ]);
+  const [books, faqs] = await Promise.all([getBooks(), getFaqs()]);
   const relevantFaqs = faqs.filter(
     (f) => f.category === "parents" || f.category === "general"
   );
@@ -45,59 +39,8 @@ export default async function ParentsEducatorsPage() {
           keep the story going after the last page.
         </p>
 
-        {/* Downloads */}
-        <div className="mt-14">
-          <h2 className="font-display text-2xl text-ink mb-6">
-            Free downloads
-          </h2>
-          <div className="grid gap-6 sm:grid-cols-2">
-            {downloads.map((item, i) => (
-              <Reveal key={item.title} delay={i * 80}>
-                <div className="flex h-full flex-col rounded-2xl bg-paper p-6 shadow-storybook">
-                  {item.thumbnail && (
-                    <div className="relative mb-4 aspect-[3/2] overflow-hidden rounded-xl">
-                      <Image
-                        src={item.thumbnail}
-                        alt={item.title}
-                        fill
-                        sizes="(max-width: 640px) 90vw, 400px"
-                        className="object-cover"
-                      />
-                    </div>
-                  )}
-                  <h3 className="font-display text-xl text-tiger-deep">
-                    {item.title}
-                  </h3>
-                  {item.description && (
-                    <p className="mt-2 flex-1 text-ink-soft leading-relaxed">
-                      {item.description}
-                    </p>
-                  )}
-                  <div className="mt-4">
-                    {item.requiresEmail || !item.fileUrl ? (
-                      <Link
-                        href="/free-colouring-page"
-                        className="inline-block rounded-full bg-tiger px-5 py-2.5 font-display text-cream shadow-storybook transition hover:bg-tiger-deep"
-                      >
-                        Get it free by email
-                      </Link>
-                    ) : (
-                      <a
-                        href={item.fileUrl}
-                        className="inline-block rounded-full border-2 border-tiger/30 px-5 py-2.5 font-display text-tiger-deep transition hover:border-tiger"
-                      >
-                        Download PDF
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-
         {/* Theme song */}
-        <div className="mt-16">
+        <div className="mt-14">
           <h2 className="font-display text-2xl text-ink mb-2">
             Tomi&apos;s theme song
           </h2>

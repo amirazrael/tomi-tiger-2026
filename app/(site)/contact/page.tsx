@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import ContactForm from "@/components/ContactForm";
+import InstagramLink from "@/components/InstagramLink";
 import { SectionTitle } from "@/components/decor";
+import { getSettings } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -20,6 +22,7 @@ export default async function ContactPage({
   searchParams: Promise<{ subject?: string }>;
 }) {
   const { subject } = await searchParams;
+  const settings = await getSettings();
   return (
     <section className="py-14 sm:py-20">
       <div className="mx-auto max-w-2xl px-4 sm:px-6">
@@ -29,6 +32,16 @@ export default async function ContactPage({
           little reader with their favourite Tomi book — April would love to
           hear from you.
         </p>
+        {settings.instagramUrl && (
+          <p className="mx-auto mt-4 max-w-xl text-center text-base text-ink-soft">
+            Prefer Instagram? Say hello on{" "}
+            <InstagramLink
+              url={settings.instagramUrl}
+              className="inline-flex min-h-0 min-w-0 align-middle"
+            />
+            .
+          </p>
+        )}
         <div className="mt-10">
           <ContactForm defaultSubject={subject ? SUBJECT_MAP[subject] : undefined} />
         </div>

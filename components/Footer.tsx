@@ -1,8 +1,13 @@
 import Link from "next/link";
+import InstagramLink from "./InstagramLink";
 import { PawTrail, Wave } from "./decor";
 import SignupForm from "./SignupForm";
 
-export default function Footer() {
+export default function Footer({
+  instagramUrl,
+}: {
+  instagramUrl?: string | null;
+}) {
   return (
     <footer className="mt-auto">
       <div className="text-jungle-deep">
@@ -17,6 +22,11 @@ export default function Footer() {
                 Heart-warming picture books for ages 3–6 by April Summers,
                 illustrated by Moonrags Studio. Published by Tiny Paws Press, Singapore.
               </p>
+              {instagramUrl && (
+                <div className="mt-4">
+                  <InstagramLink url={instagramUrl} light />
+                </div>
+              )}
               <PawTrail className="mt-5 text-cream/30" />
             </div>
             <div>

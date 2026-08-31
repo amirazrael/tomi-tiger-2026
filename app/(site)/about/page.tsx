@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import InstagramLink from "@/components/InstagramLink";
 import { Blob, SectionTitle } from "@/components/decor";
 import Reveal from "@/components/Reveal";
-import { getAbout, paragraphs } from "@/lib/data";
+import { getAbout, getSettings, paragraphs } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "About April Summers & Tiny Paws Press",
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const about = await getAbout();
+  const [about, settings] = await Promise.all([getAbout(), getSettings()]);
   return (
     <section className="py-14 sm:py-20 relative overflow-hidden">
       <Blob className="absolute -top-32 -right-32 w-96 h-96 text-sunshine/20" />
@@ -24,21 +25,13 @@ export default async function AboutPage() {
         <div className="mt-12 grid gap-10 md:grid-cols-5 items-start">
           <div className="md:col-span-2">
             <div className="relative aspect-square overflow-hidden rounded-[38%_62%_57%_43%/45%_38%_62%_55%] shadow-lifted rotate-2 bg-cream-deep">
-              {about.authorPhoto ? (
-                <Image
-                  src={about.authorPhoto}
-                  alt="April Summers, author of Tomi the Tiger"
-                  fill
-                  sizes="(max-width: 768px) 90vw, 350px"
-                  className="object-cover"
-                />
-              ) : (
-                <div className="absolute inset-0 grid place-items-center p-8 text-center">
-                  <p className="font-display text-ink-soft">
-                    April&apos;s photo — add it in the Studio ✏️
-                  </p>
-                </div>
-              )}
+              <Image
+                src={about.authorPhoto ?? "/images/about-paws.png"}
+                alt="Tomi the Tiger paw prints"
+                fill
+                sizes="(max-width: 768px) 90vw, 350px"
+                className="object-contain p-8 sm:p-10"
+              />
             </div>
           </div>
           <div className="md:col-span-3">
@@ -51,6 +44,17 @@ export default async function AboutPage() {
                   <p key={p.slice(0, 24)}>{p}</p>
                 ))}
               </div>
+              {settings.instagramUrl && (
+                <p className="mt-6 text-base text-ink-soft">
+                  See Tomi in the wild — behind-the-scenes sketches, new art
+                  and jungle updates on{" "}
+                  <InstagramLink
+                    url={settings.instagramUrl}
+                    className="inline-flex min-h-0 min-w-0 align-middle"
+                  />
+                  .
+                </p>
+              )}
             </Reveal>
           </div>
         </div>

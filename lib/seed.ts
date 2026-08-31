@@ -202,6 +202,7 @@ export const seedHome: HomeContent = {
 };
 
 export const seedAbout: AboutContent = {
+  authorPhoto: "/images/about-paws.png",
   authorBio:
     "April Summers writes stories that help small children navigate big feelings. Based in Singapore, she created Tomi the Tiger after noticing how quickly little ones connect with characters who feel exactly what they feel — fear, jealousy, nervousness — and keep going anyway.\n\nThe seven-book series follows one small cub from his very first friend to his very first day of school, growing a little braver with every story.",
     // ^ Placeholder bio — replace with April's real bio in Sanity.
@@ -215,5 +216,6 @@ export const seedAbout: AboutContent = {
 
 export const seedSettings: SiteSettings = {
   announcement: null,
+  instagramUrl: "https://www.instagram.com/tomithetiger",
   contactEmail: "hello@tomithetiger.com",
 };
