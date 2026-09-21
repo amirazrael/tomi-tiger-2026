@@ -4,9 +4,10 @@ import type { Book } from "@/lib/types";
 const RETAILERS: {
   key: keyof Pick<Book, "amazonUSLink" | "amazonSGLink" | "kinokuniyaLink">;
   label: string;
+  primaryLabel?: string;
 }[] = [
+  { key: "amazonUSLink", label: "Amazon US", primaryLabel: "Buy Now on Amazon" },
   { key: "amazonSGLink", label: "Amazon Singapore" },
-  { key: "amazonUSLink", label: "Amazon US" },
   { key: "kinokuniyaLink", label: "Kinokuniya" },
 ];
 
@@ -33,22 +34,27 @@ export default function BuyButtons({ book }: { book: Book }) {
   }
 
   return (
-    <div className="flex flex-wrap gap-3">
-      {available.map((r, i) => (
-        <a
-          key={r.key}
-          href={book[r.key] as string}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`rounded-full px-6 py-3.5 font-display text-lg shadow-storybook transition hover:-translate-y-0.5 ${
-            i === 0
-              ? "bg-tiger text-cream hover:bg-tiger-deep"
-              : "bg-paper text-tiger-deep border-2 border-tiger/30 hover:border-tiger"
-          }`}
-        >
-          {r.label} →
-        </a>
-      ))}
+    <div className="rounded-2xl bg-sky/60 p-5">
+      <p className="font-display text-lg text-ink mb-3">
+        Experience this adventure now!
+      </p>
+      <div className="flex flex-wrap gap-3">
+        {available.map((r, i) => (
+          <a
+            key={r.key}
+            href={book[r.key] as string}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`rounded-full px-6 py-3.5 font-display text-lg shadow-storybook transition hover:-translate-y-0.5 ${
+              i === 0
+                ? "bg-tiger text-cream hover:bg-tiger-deep"
+                : "bg-paper text-tiger-deep border-2 border-tiger/30 hover:border-tiger"
+            }`}
+          >
+            {i === 0 && r.primaryLabel ? r.primaryLabel : `${r.label} →`}
+          </a>
+        ))}
+      </div>
     </div>
   );
 }

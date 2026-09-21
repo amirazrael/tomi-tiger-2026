@@ -5,6 +5,8 @@ import InstagramLink from "@/components/InstagramLink";
 import { Blob, SectionTitle } from "@/components/decor";
 import Reveal from "@/components/Reveal";
 import { getAbout, getSettings, paragraphs } from "@/lib/data";
+import { authorPersonSchema } from "@/lib/json-ld";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const metadata: Metadata = {
   title: "About April Summers & Tiny Paws Press",
@@ -14,13 +16,40 @@ export const metadata: Metadata = {
 
 export default async function AboutPage() {
   const [about, settings] = await Promise.all([getAbout(), getSettings()]);
+  const base = getSiteUrl();
+  const personJsonLd = authorPersonSchema(base, settings.instagramUrl);
+
   return (
-    <section className="py-14 sm:py-20 relative overflow-hidden">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <section className="py-14 sm:py-20 relative overflow-hidden">
       <Blob className="absolute -top-32 -right-32 w-96 h-96 text-sunshine/20" />
       <div className="relative mx-auto max-w-4xl px-4 sm:px-6">
         <SectionTitle eyebrow="The people behind the paws">
           About April & Tiny Paws Press
         </SectionTitle>
+
+        <div className="mx-auto mt-8 max-w-2xl rounded-2xl bg-cream-deep p-6 text-sm text-ink-soft leading-relaxed">
+          <h2 className="font-display text-lg text-ink mb-3">At a glance</h2>
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              <strong>Tomi the Tiger</strong> is a seven-book picture book
+              series for ages 3–6 about friendship, bravery, and big feelings.
+            </li>
+            <li>
+              Written by <strong>April Summers</strong>, illustrated by{" "}
+              <strong>Moonrags Studio</strong>, published by{" "}
+              <strong>Tiny Paws Press</strong> in Singapore.
+            </li>
+            <li>
+              Book 1, <em>Tomi Finds a Friend</em>, is available on Amazon
+              (ISBN 9819474094).
+            </li>
+          </ul>
+        </div>
 
         <div className="mt-12 grid gap-10 md:grid-cols-5 items-start">
           <div className="md:col-span-2">
@@ -96,5 +125,6 @@ export default async function AboutPage() {
         </Reveal>
       </div>
     </section>
+    </>
   );
 }

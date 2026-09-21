@@ -8,6 +8,8 @@ import { PawTrail, SectionTitle } from "@/components/decor";
 import Reveal from "@/components/Reveal";
 import ReviewCard from "@/components/ReviewCard";
 import { getBook, getBooks, getReviews, paragraphs } from "@/lib/data";
+import { absoluteAssetUrl, bookSchema } from "@/lib/json-ld";
+import { getSiteUrl } from "@/lib/site-url";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -20,9 +22,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const book = await getBook(slug);
   if (!book) return {};
+  const base = getSiteUrl();
+  const description = book.seoDescription ?? paragraphs(book.blurb)[0];
+  const cover = absoluteAssetUrl(base, book.coverImage);
   return {
     title: `${book.title} (Book ${book.bookNumber})`,
-    description: book.seoDescription ?? paragraphs(book.blurb)[0],
+    description,
+    openGraph: {
+      title: `${book.title} | Tomi the Tiger Book ${book.bookNumber}`,
+      description,
+      url: `${base}/books/${book.slug}`,
+      ...(cover ? { images: [{ url: cover, alt: `${book.title} book cover` }] } : {}),
+    },
   };
 }
 
@@ -38,19 +49,10 @@ export default async function BookPage({ params }: Props) {
   const reviews = allReviews.filter((r) => r.bookSlug === book.slug);
   const next = allBooks.find((b) => b.bookNumber === book.bookNumber + 1);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Book",
-    name: book.title,
-    bookFormat: "https://schema.org/Paperback",
-    author: { "@type": "Person", name: "April Summers" },
-    illustrator: { "@type": "Organization", name: "Moonrags Studio" },
-    publisher: { "@type": "Organization", name: "Tiny Paws Press" },
-    ...(book.isbn ? { isbn: book.isbn } : {}),
-    typicalAgeRange: book.ageRange,
-    position: book.bookNumber,
-    isPartOf: { "@type": "BookSeries", name: "Tomi the Tiger" },
-  };
+  const base = getSiteUrl();
+  const jsonLd = bookSchema(book, base);
+  const buyUrl =
+    book.amazonUSLink ?? book.amazonSGLink ?? book.kinokuniyaLink;
 
   return (
     <>
@@ -117,6 +119,29 @@ export default async function BookPage({ params }: Props) {
               <div className="mt-8">
                 <BuyButtons book={book} />
               </div>
+
+              {!book.comingSoon && (book.isbn || buyUrl) && (
+                <div className="mt-6 rounded-2xl bg-cream-deep p-5 text-sm text-ink-soft leading-relaxed">
+                  <h2 className="font-display text-base text-ink mb-2">
+                    At a glance
+                  </h2>
+                  <ul className="list-disc space-y-1.5 pl-5">
+                    <li>
+                      <strong>{book.title}</strong> is Book {book.bookNumber}{" "}
+                      in the Tomi the Tiger picture book series (ages{" "}
+                      {book.ageRange}).
+                    </li>
+                    <li>
+                      Written by April Summers, illustrated by Moonrags
+                      Studio, published by Tiny Paws Press, Singapore.
+                    </li>
+                    {book.isbn && <li>ISBN {book.isbn}.</li>}
+                    {buyUrl && (
+                      <li>Available to buy online from the link above.</li>
+                    )}
+                  </ul>
+                </div>
+              )}
 
               {book.readingLevelNotes && (
                 <div className="mt-8 rounded-2xl bg-cream-deep p-5">

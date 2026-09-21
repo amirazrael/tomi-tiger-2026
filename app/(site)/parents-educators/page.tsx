@@ -4,6 +4,7 @@ import { SectionTitle } from "@/components/decor";
 import FaqList from "@/components/FaqList";
 import ThemeSongPlayer from "@/components/ThemeSongPlayer";
 import { getBooks, getFaqs } from "@/lib/data";
+import { faqPageSchema } from "@/lib/json-ld";
 
 export const metadata: Metadata = {
   title: "For Parents & Educators",
@@ -27,8 +28,15 @@ export default async function ParentsEducatorsPage() {
     }
   }
 
+  const faqJsonLd = faqPageSchema(relevantFaqs);
+
   return (
-    <section className="py-14 sm:py-20">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <section className="py-14 sm:py-20">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <SectionTitle eyebrow="For grown-ups">
           Parents & Educators
@@ -92,5 +100,6 @@ export default async function ParentsEducatorsPage() {
         </div>
       </div>
     </section>
+    </>
   );
 }

@@ -22,11 +22,15 @@ export const seedBooks: Book[] = [
     title: "Tomi Finds a Friend",
     subtitle: "Not everyone says yes.",
     bookNumber: 1,
-    coverImage: "/images/books/tomi-finds-a-friend-cover-v2.png",
+    coverImage: "/images/books/tomi-finds-a-friend-cover-160926.jpg",
     blurb:
       "Tomi is a little tiger who loves to run, jump, and play.\n\nBut today, he doesn't want to play alone.\n\nSo off he goes to find a friend — past the tall grass, past the quiet lake, further from home than he's ever been. Each time someone says no, Tomi takes a breath.\n\n\"That's okay. I'll keep looking.\"",
     ageRange: "3–6",
-    comingSoon: true,
+    comingSoon: false,
+    isbn: "9819474094",
+    amazonUSLink: "https://www.amazon.com/dp/9819474094",
+    seoDescription:
+      "Picture book for ages 3–6 about making friends and handling rejection — Tomi Finds a Friend (Book 1) by April Summers. Illustrated by Moonrags Studio. Buy on Amazon.",
     themes: ["Friendship", "Perseverance", "Kindness"],
     readingLevelNotes:
       "A gentle story about handling rejection, staying hopeful, and finding a friend who wants to play too.\n\nIncludes a Note to Grown-Ups with conversation starters, plus three activity pages to explore feelings together.",

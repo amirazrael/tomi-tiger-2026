@@ -166,7 +166,11 @@ export default async function HomePage() {
           <div className="mt-12 grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
             {books.map((book, i) => (
               <Reveal key={book.slug} delay={(i % 4) * 80}>
-                <BookCard book={book} index={i} />
+                <BookCard
+                  book={book}
+                  index={i}
+                  outNowBadge={book.bookNumber === 1 && !book.comingSoon}
+                />
               </Reveal>
             ))}
             <Reveal delay={((books.length) % 4) * 80}>

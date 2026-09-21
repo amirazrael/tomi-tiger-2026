@@ -85,7 +85,7 @@ export function Cover({ book, priority = false }: { book: Book; priority?: boole
         <div className="absolute inset-0 flex items-center justify-center p-2">
           <Image
             src={book.coverImage}
-            alt={`${book.title} — book cover`}
+            alt={`${book.title} — Tomi the Tiger Book ${book.bookNumber} cover`}
             width={800}
             height={800}
             priority={priority}
@@ -128,9 +128,12 @@ export function Cover({ book, priority = false }: { book: Book; priority?: boole
 export default function BookCard({
   book,
   index = 0,
+  outNowBadge = false,
 }: {
   book: Book;
   index?: number;
+  /** Show “Out Now!” beside the book number (e.g. homepage Book 1). */
+  outNowBadge?: boolean;
 }) {
   const tilt = index % 2 === 0 ? "rotate-[1.5deg]" : "-rotate-[1.5deg]";
   return (
@@ -150,7 +153,14 @@ export default function BookCard({
         </CoverFrame>
       </TiltCard>
       <div className="mt-4 text-center">
-        <p className="font-display text-tiger text-sm">Book {book.bookNumber}</p>
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <p className="font-display text-tiger text-sm">Book {book.bookNumber}</p>
+          {outNowBadge && (
+            <span className="rounded-full bg-tiger px-2.5 py-0.5 font-display text-[0.65rem] tracking-wide text-cream uppercase shadow-storybook">
+              Out Now!
+            </span>
+          )}
+        </div>
         <p className="font-display text-lg leading-snug text-ink group-hover:text-tiger-deep transition-colors">
           {book.title}
         </p>
