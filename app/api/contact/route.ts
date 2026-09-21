@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { mailerLiteGroupsFromEnv } from "@/lib/mailerlite";
 
 const MAILERLITE_API = "https://connect.mailerlite.com/api/subscribers";
 
@@ -46,7 +47,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const groupId = process.env.MAILERLITE_CONTACT_GROUP_ID;
+  const groups = mailerLiteGroupsFromEnv(process.env.MAILERLITE_CONTACT_GROUP_ID);
   const res = await fetch(MAILERLITE_API, {
     method: "POST",
     headers: {
@@ -55,7 +56,7 @@ export async function POST(request: Request) {
     },
     body: JSON.stringify({
       email,
-      ...(groupId ? { groups: [groupId] } : {}),
+      ...(groups ? { groups } : {}),
       fields: {
         name: body.name?.trim().slice(0, 190) ?? "",
         contact_subject: body.subject?.trim().slice(0, 190) ?? "",
