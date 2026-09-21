@@ -24,8 +24,35 @@ function isDuplicateSubscriber(status: number, body: string): boolean {
   return (
     lower.includes("already") ||
     lower.includes("duplicate") ||
-    lower.includes("exists")
+    lower.includes("exists") ||
+    lower.includes("taken")
   );
+}
+
+function subscribePayloadAttempts(
+  email: string,
+  source: string
+): Record<string, unknown>[] {
+  const groups = mailerLiteGroupsFromEnv(process.env.MAILERLITE_GROUP_ID);
+  const resubscribe = { resubscribe: true as const };
+  const candidates = [
+    {
+      email,
+      ...resubscribe,
+      ...(groups && { groups }),
+      fields: { signup_source: source },
+    },
+    { email, ...resubscribe, ...(groups && { groups }) },
+    { email, ...resubscribe, fields: { signup_source: source } },
+    { email, ...resubscribe },
+  ];
+  const seen = new Set<string>();
+  return candidates.filter((payload) => {
+    const key = JSON.stringify(payload);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 export async function POST(request: Request) {
@@ -52,30 +79,32 @@ export async function POST(request: Request) {
     );
   }
 
-  const groups = mailerLiteGroupsFromEnv(process.env.MAILERLITE_GROUP_ID);
-  const basePayload: Record<string, unknown> = { email };
-  if (groups) basePayload.groups = groups;
+  const source = body.source ?? "website";
+  let lastStatus = 0;
+  let lastText = "";
 
-  const withSource = {
-    ...basePayload,
-    fields: { signup_source: body.source ?? "website" },
-  };
+  for (const payload of subscribePayloadAttempts(email, source)) {
+    const res = await mailerLiteSubscribe(apiKey, payload);
+    const text = await res.text();
+    lastStatus = res.status;
+    lastText = text;
 
-  let res = await mailerLiteSubscribe(apiKey, withSource);
-  let text = await res.text();
-
-  // Custom field missing in MailerLite — retry without optional fields.
-  if (!res.ok && res.status === 422 && text.toLowerCase().includes("field")) {
-    res = await mailerLiteSubscribe(apiKey, basePayload);
-    text = await res.text();
+    if (res.ok) {
+      return NextResponse.json({ ok: true });
+    }
+    if (isDuplicateSubscriber(res.status, text)) {
+      return NextResponse.json({ ok: true });
+    }
+    // Only try simpler payloads for validation errors.
+    if (res.status !== 422) break;
   }
 
-  if (isDuplicateSubscriber(res.status, text)) {
-    return NextResponse.json({ ok: true });
-  }
-
-  if (!res.ok) {
-    console.error("MailerLite subscribe failed", res.status, text);
+  if (lastStatus !== 0) {
+    console.error(
+      "MailerLite subscribe failed",
+      lastStatus,
+      lastText.slice(0, 2000)
+    );
     return NextResponse.json(
       { error: "Something went wrong — please try again." },
       { status: 502 }
