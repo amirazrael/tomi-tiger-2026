@@ -38,14 +38,21 @@ export const seedBooks: Book[] = [
   {
     slug: "tomi-learns-to-be-brave",
     title: "Tomi Learns to be Brave",
+    subtitle: "Someone is calling for help. What will Tomi do?",
     bookNumber: 2,
+    coverImage: "/images/books/tomi-learns-to-be-brave-cover-221126.jpg",
     blurb:
-      "When Binni the bunny needs help, Tomi is scared. Really scared.\n\nBut being brave isn't about not being afraid — it's about whispering “just a little brave” and acting anyway. With help from a very large new friend, Tomi discovers what courage really means.\n\nA story for every child who has ever felt too small for a big moment.",
+      "Tomi is a little tiger walking through the forest, humming a happy song — until he hears a cry from the lake. Bunny is in trouble.\n\nTomi wants to help, but his paws freeze. There are so many crocodiles, and only one of him. Then he meets Emmi, a little elephant with bright eyes and a big heart — and together, they come up with a plan.\n\n\"Just a little brave,\" Tomi whispers.\n\nA gentle story about facing fear, asking for help, and finding courage together.",
     ageRange: "3–6",
-    comingSoon: true,
+    comingSoon: false,
+    isbn: "9819482291",
+    amazonUSLink:
+      "https://www.amazon.com/Tomi-Tiger-Learns-be-Brave/dp/9819482291/",
+    seoDescription:
+      "Picture book for ages 3–6 about courage, asking for help, and facing fear — Tomi Learns to be Brave (Book 2) by April Summers. Illustrated by Moonrags Studio. Buy on Amazon.",
     themes: ["Courage", "Facing fears", "Helping others"],
     readingLevelNotes:
-      "Slightly longer sentences with a gentle emotional arc. Great for talking about fear and bravery.",
+      "Perfect for children aged 3–6 who are learning that being brave doesn't mean you're not scared — it means you try anyway.\n\nInside this book: a warm, hand-illustrated story in soft watercolour; \"How Does Tomi Feel?\" (Tomi's tail shows his feelings); \"Do You Remember?\" picture-matching game; \"What About You?\" reflection and drawing space; and a Note to Grown-Ups with conversation starters.\n\nBook 2 of seven — Tomi's story begins in Book 1, Tomi Finds a Friend.",
   },
   {
     slug: "tomi-helps-at-the-beach",

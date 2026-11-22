@@ -169,7 +169,7 @@ export default async function HomePage() {
                 <BookCard
                   book={book}
                   index={i}
-                  outNowBadge={book.bookNumber === 1 && !book.comingSoon}
+                  outNowBadge={!book.comingSoon}
                 />
               </Reveal>
             ))}

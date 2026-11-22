@@ -45,8 +45,9 @@ export default async function AboutPage() {
               <strong>Tiny Paws Press</strong> in Singapore.
             </li>
             <li>
-              Book 1, <em>Tomi Finds a Friend</em>, is available on Amazon
-              (ISBN 9819474094).
+              Books 1 and 2 are available on Amazon:{" "}
+              <em>Tomi Finds a Friend</em> (ISBN 9819474094) and{" "}
+              <em>Tomi Learns to be Brave</em> (ISBN 9819482291).
             </li>
           </ul>
         </div>
