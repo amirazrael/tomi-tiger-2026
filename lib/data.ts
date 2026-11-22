@@ -11,6 +11,7 @@ import {
   reviewsQuery,
   settingsQuery,
 } from "./sanity/queries";
+import { applyRepoCover } from "./repo-book-covers";
 import {
   seedAbout,
   seedBooks,
@@ -49,6 +50,13 @@ async function fromSanity<T>(
 
 const seedBySlug = new Map(seedBooks.map((b) => [b.slug, b]));
 
+function seedForCmsBook(cms: Book): Book | undefined {
+  return (
+    seedBySlug.get(cms.slug) ??
+    seedBooks.find((s) => s.bookNumber === cms.bookNumber)
+  );
+}
+
 /** Seed marked live in repo while Sanity still “coming soon” (deploy before CMS catch-up). */
 function seedLaunchedInRepo(seed: Book): boolean {
   return !seed.comingSoon && Boolean(seed.amazonUSLink ?? seed.isbn);
@@ -59,32 +67,34 @@ function seedLaunchedInRepo(seed: Book): boolean {
  * “coming soon”, and always fall back cover image to /public when CMS has none.
  */
 export function mergeBookWithSeed(cms: Book, seed?: Book): Book {
-  if (!seed) return cms;
+  if (!seed) return applyRepoCover(cms);
 
-  const cmsCover = cms.coverImage?.trim();
-  const seedCover = seed.coverImage?.trim();
-  const coverImage = cmsCover || seedCover || cms.coverImage;
-
-  const cmsMissingCover = !cmsCover;
-  const useSeedLaunch =
-    seedLaunchedInRepo(seed) && (cms.comingSoon || cmsMissingCover);
-
-  if (useSeedLaunch) {
-    return { ...seed, coverImage: coverImage ?? seed.coverImage };
+  if (seedLaunchedInRepo(seed)) {
+    const merged = {
+      ...cms,
+      ...seed,
+      slug: cms.slug,
+      bookNumber: cms.bookNumber,
+    };
+    return applyRepoCover(merged);
   }
 
-  return { ...cms, coverImage };
+  const coverImage =
+    cms.coverImage?.trim() || seed.coverImage?.trim() || cms.coverImage;
+  return applyRepoCover({ ...cms, coverImage });
 }
 
 export async function getBooks(): Promise<Book[]> {
   const books = await fromSanity<Book[]>(booksQuery, {}, seedBooks);
   let list = books.length ? books : seedBooks;
-  list = list.map((book) => mergeBookWithSeed(book, seedBySlug.get(book.slug)));
+  list = list.map((book) =>
+    mergeBookWithSeed(book, seedForCmsBook(book))
+  );
 
   const slugs = new Set(list.map((b) => b.slug));
   for (const seed of seedBooks) {
     if (!slugs.has(seed.slug) && seedLaunchedInRepo(seed)) {
-      list.push(seed);
+      list.push(applyRepoCover(seed));
     }
   }
 
@@ -93,12 +103,16 @@ export async function getBooks(): Promise<Book[]> {
 
 export async function getBook(slug: string): Promise<Book | null> {
   if (!sanityConfigured || !client) {
-    return seedBooks.find((b) => b.slug === slug) ?? null;
+    const book = seedBooks.find((b) => b.slug === slug) ?? null;
+    return book ? applyRepoCover(book) : null;
   }
   const book = await client.fetch<Book | null>(bookBySlugQuery, { slug }, options);
   const seed = seedBySlug.get(slug);
-  if (!book) return seed ?? null;
-  return mergeBookWithSeed(book, seed);
+  if (!book) {
+    const fallback = seed ?? seedBooks.find((b) => b.slug === slug) ?? null;
+    return fallback ? applyRepoCover(fallback) : null;
+  }
+  return mergeBookWithSeed(book, seed ?? seedForCmsBook(book));
 }
 
 export async function getReviews(): Promise<Review[]> {
