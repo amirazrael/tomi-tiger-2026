@@ -47,9 +47,34 @@ async function fromSanity<T>(
   return result ?? fallback;
 }
 
+const seedBySlug = new Map(seedBooks.map((b) => [b.slug, b]));
+
+/** Seed marked live in repo while Sanity still “coming soon” (deploy before CMS catch-up). */
+function seedLaunchedInRepo(seed: Book): boolean {
+  return !seed.comingSoon && Boolean(seed.amazonUSLink ?? seed.isbn);
+}
+
+/**
+ * Sanity is source of truth, except: use seed launch data when CMS is still
+ * “coming soon”, and always fall back cover image to /public when CMS has none.
+ */
+export function mergeBookWithSeed(cms: Book, seed?: Book): Book {
+  if (!seed) return cms;
+
+  const coverImage =
+    cms.coverImage?.trim() || seed.coverImage?.trim() || cms.coverImage;
+
+  if (cms.comingSoon && seedLaunchedInRepo(seed)) {
+    return { ...seed, coverImage: coverImage ?? seed.coverImage };
+  }
+
+  return { ...cms, coverImage };
+}
+
 export async function getBooks(): Promise<Book[]> {
   const books = await fromSanity<Book[]>(booksQuery, {}, seedBooks);
-  return books.length ? books : seedBooks;
+  const list = books.length ? books : seedBooks;
+  return list.map((book) => mergeBookWithSeed(book, seedBySlug.get(book.slug)));
 }
 
 export async function getBook(slug: string): Promise<Book | null> {
@@ -57,7 +82,9 @@ export async function getBook(slug: string): Promise<Book | null> {
     return seedBooks.find((b) => b.slug === slug) ?? null;
   }
   const book = await client.fetch<Book | null>(bookBySlugQuery, { slug }, options);
-  return book ?? seedBooks.find((b) => b.slug === slug) ?? null;
+  const seed = seedBySlug.get(slug);
+  if (!book) return seed ?? null;
+  return mergeBookWithSeed(book, seed);
 }
 
 export async function getReviews(): Promise<Review[]> {
