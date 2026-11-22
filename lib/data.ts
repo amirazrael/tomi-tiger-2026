@@ -61,10 +61,15 @@ function seedLaunchedInRepo(seed: Book): boolean {
 export function mergeBookWithSeed(cms: Book, seed?: Book): Book {
   if (!seed) return cms;
 
-  const coverImage =
-    cms.coverImage?.trim() || seed.coverImage?.trim() || cms.coverImage;
+  const cmsCover = cms.coverImage?.trim();
+  const seedCover = seed.coverImage?.trim();
+  const coverImage = cmsCover || seedCover || cms.coverImage;
 
-  if (cms.comingSoon && seedLaunchedInRepo(seed)) {
+  const cmsMissingCover = !cmsCover;
+  const useSeedLaunch =
+    seedLaunchedInRepo(seed) && (cms.comingSoon || cmsMissingCover);
+
+  if (useSeedLaunch) {
     return { ...seed, coverImage: coverImage ?? seed.coverImage };
   }
 
@@ -73,8 +78,17 @@ export function mergeBookWithSeed(cms: Book, seed?: Book): Book {
 
 export async function getBooks(): Promise<Book[]> {
   const books = await fromSanity<Book[]>(booksQuery, {}, seedBooks);
-  const list = books.length ? books : seedBooks;
-  return list.map((book) => mergeBookWithSeed(book, seedBySlug.get(book.slug)));
+  let list = books.length ? books : seedBooks;
+  list = list.map((book) => mergeBookWithSeed(book, seedBySlug.get(book.slug)));
+
+  const slugs = new Set(list.map((b) => b.slug));
+  for (const seed of seedBooks) {
+    if (!slugs.has(seed.slug) && seedLaunchedInRepo(seed)) {
+      list.push(seed);
+    }
+  }
+
+  return list.sort((a, b) => a.bookNumber - b.bookNumber);
 }
 
 export async function getBook(slug: string): Promise<Book | null> {

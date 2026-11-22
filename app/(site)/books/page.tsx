@@ -26,7 +26,11 @@ export default async function BooksPage() {
         <div className="mt-14 grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
           {books.map((book, i) => (
             <Reveal key={book.slug} delay={(i % 4) * 80}>
-              <BookCard book={book} index={i} />
+              <BookCard
+                book={book}
+                index={i}
+                outNowBadge={!book.comingSoon}
+              />
             </Reveal>
           ))}
         </div>
